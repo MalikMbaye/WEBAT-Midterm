@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Add Listing{% endblock %}
+{% block content %}
+<br/><br/>
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-warning" role="alert">{{ message }}</div>
+{% endfor %}
+    <form method="POST" action="{{ url_for('newlisting') }}">
+        {{ form.csrf_token }}
+        <div class="form-group">
+        {{ form.name.label }}
+        {{ form.name(class_="form-control", size=20) }}
+        </div>
+        <div class="form-group">
+        {{ form.description.label }}
+        {{ form.description(class_="form-control", size=200) }}
+        </div>
+        <div class="form-group">
+        {{ form.price.label }}
+        {{ form.price(class_="form-control", size=20) }}
+        </div>
+        <a href="/listing/new">Add a New Listing</a>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
