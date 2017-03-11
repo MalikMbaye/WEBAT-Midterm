@@ -41,6 +41,43 @@ def newlisting():
     else:
         return render_template('newlisting.html', form=form)
 
+@app.route('/listing/show/<listing_id>')
+def listing_show(listing_id):
+    try:
+        lst = Listing.query.get(listing_id)
+    except:
+        abort(404)
+    return render_template('listing_show.html', list_id=lst.id, listing=lst)
+
+@app.route('/listing/edit/<listing_id>', methods=['GET','POST'])
+def listing_edit(listing_id):
+    form = ListingForm(request.form)
+    if request.method == 'POST':
+        if form.validate() == False:
+            flash('All fields are required.')
+            return render_template('listing_edit.html', form=form)
+        else:
+            lst = Listing.query.get(listing_id)
+            lst.name=form.name.data
+            lst.description= form.description.data
+            lst.price=form.price.data
+            db.session.commit()
+            flash('Your listing was edited.')
+            return render_template('listing_edit.html', form=form)
+    else:
+        try:
+            lst = Listing.query.get(listing_id)
+            lstForm = ListingForm(obj=lst)
+        except:
+            abort(404)
+        return render_template('listing_edit.html', form=lstForm)
+
+@app.route('/listing/delete/<listing_id>', methods=['GET', 'POST'])
+def listing_delete(listing_id):
+    Listing.query.filter_by(id=listing_id).delete()
+    db.session.commit()
+    return render_template('listing_delete_confirm.html', list_id=listing_id)
+
 @app.route('/about')
 def about():
     return render_template('about.html')
